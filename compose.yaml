@@ -10,3 +10,16 @@ services:
       - 'GOMAXPROCS=$GOMAXPROCS'
       - 'GOMEMLIMIT=$GOMEMLIMIT'
       - 'PORT=$PORT'
+  prometheus:
+    image: 'docker.io/prom/prometheus:v2.54.1'
+    ports:
+      - '9090:9090'
+    volumes:
+      - './prometheus.yaml:/etc/config.yaml:ro'
+    args:
+      - '--config.file=/etc/config.yaml'
+    environment:
+      - 'GOMAXPROCS=$GOMAXPROCS'
+      - 'GOMEMLIMIT=$GOMEMLIMIT'
+    depends_on:
+      - 'myapp'
