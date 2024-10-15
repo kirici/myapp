@@ -23,3 +23,12 @@ services:
       - 'GOMEMLIMIT=$GOMEMLIMIT'
     depends_on:
       - 'myapp'
+  grafana:
+    image: 'docker.io/grafana/grafana:11.2.2'
+    ports:
+      - '3000:3000'
+    volumes:
+      - './grafana.db:/var/lib/grafana/grafana.db'
+    depends_on:
+      - 'myapp'
+      - 'prometheus'
