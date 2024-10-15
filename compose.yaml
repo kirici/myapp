@@ -1,4 +1,14 @@
 services:
+  postgres:
+    image: 'docker.io/library/postgres:16-bookworm'
+    ports:
+      - '5432:5432'
+    volumes:
+      - 'myapp-pg:/var/lib/postgresql/data'
+    environment:
+      POSTGRES_USER: 'postgres'
+      POSTGRES_PASSWORD: 'postgres'
+      POSTGRES_DB: 'myapp'
   myapp:
     build:
       context: '.'
@@ -32,3 +42,5 @@ services:
     depends_on:
       - 'myapp'
       - 'prometheus'
+volumes:
+  myapp-pg:
