@@ -9,3 +9,9 @@ up:
 
 down:
     podman compose down --volumes
+
+vegeta:
+    vegeta attack -rate=2000/1s -duration=600s -targets targets.txt &>/dev/null
+
+ddos:
+    vegeta attack -rate=9001/1s -duration=300s -targets targets.txt &>/dev/null
