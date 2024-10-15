@@ -25,9 +25,9 @@ services:
     ports:
       - '9090:9090'
     volumes:
-      - './prometheus.yaml:/etc/config.yaml:ro'
+      - './prometheus.yml:/etc/prometheus/prometheus.yml'
     args:
-      - '--config.file=/etc/config.yaml'
+      - '--config.file=/etc/prometheus/prometheus.yml'
     environment:
       - 'GOMAXPROCS=$GOMAXPROCS'
       - 'GOMEMLIMIT=$GOMEMLIMIT'
