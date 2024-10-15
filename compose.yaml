@@ -1,0 +1,12 @@
+services:
+  myapp:
+    build:
+      context: '.'
+      dockerfile: 'containerfile'
+    env_file: '.env'
+    ports:
+      - '$PORT:$PORT'
+    environment:
+      - 'GOMAXPROCS=$GOMAXPROCS'
+      - 'GOMEMLIMIT=$GOMEMLIMIT'
+      - 'PORT=$PORT'
