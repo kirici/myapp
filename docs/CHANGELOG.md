@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file. See [conventional commits](https://www.conventionalcommits.org/) for commit message semantics.
 
 ---
+## [0.2.0](https://github.com/kirici/myapp/compare/v0.1.0..v0.2.0) - 2024-10-16
+
+### Features
+
+- **(app)** add two new endpoints at "/" and "/math" - ([2df0b19](https://github.com/kirici/myapp/commit/2df0b19a8fc4dc3b5440067639e46ea6f99be873)) - kirici
+
+### Bug Fixes
+
+- **(obs)** prometheus ignoring config file, target pointing to local container - ([76769b5](https://github.com/kirici/myapp/commit/76769b5f95ba3c104866fc56f8b62969b041fd89)) - kirici
+
+### Documentation
+
+- add vegeta to requirements - ([a38c05b](https://github.com/kirici/myapp/commit/a38c05bc88a75495fae8893b9d81c356c84f3c7f)) - kirici
+- add required steps for launching - ([54619d8](https://github.com/kirici/myapp/commit/54619d877ab47ef37f65eee1cb0048d4b1cdb4ca)) - kirici
+
+---
 ## [0.1.0] - 2024-10-15
 
 ### Features
