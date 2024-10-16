@@ -15,4 +15,10 @@ A few tools are assumed to be available:
 
 ## Usage
 
+Copy `.env.sample` to `.env` and adjust the values as needed. If `direnv` is
+not available, add `export ` in front of all environment variables and source
+the `.env` file in your shell instead.
+
+Then, run:
+
 `just up`
