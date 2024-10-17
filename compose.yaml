@@ -16,10 +16,6 @@ services:
     env_file: '.env'
     ports:
       - '$PORT:$PORT'
-    environment:
-      - 'GOMAXPROCS=$GOMAXPROCS'
-      - 'GOMEMLIMIT=$GOMEMLIMIT'
-      - 'PORT=$PORT'
   prometheus:
     image: 'docker.io/prom/prometheus:v2.54.1'
     ports:
