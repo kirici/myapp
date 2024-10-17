@@ -6,6 +6,7 @@ import (
 	"math/rand"
 	"net/http"
 	"os"
+	"time"
 
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
@@ -37,6 +38,16 @@ func handleMath() http.HandlerFunc {
 	)
 }
 
+func handleWork() http.HandlerFunc {
+	return promhttp.InstrumentHandlerCounter(
+		totalRequests,
+		http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			time.Sleep(time.Duration(rand.Intn(5)) * time.Second)
+			fmt.Fprint(w, "Done!")
+		}),
+	)
+}
+
 func init() {
 	prometheus.MustRegister(totalRequests) // Alternatively use .Register and check errs
 }
@@ -44,6 +55,7 @@ func init() {
 func main() {
 	http.Handle("/", handleHello())
 	http.Handle("/math", handleMath())
+	http.Handle("/work", handleWork())
 	http.Handle("/metrics", promhttp.Handler())
 	log.Fatal(http.ListenAndServe(":"+os.Getenv("PORT"), nil))
 }
