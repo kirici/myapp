@@ -48,11 +48,8 @@ func handleWork() http.HandlerFunc {
 	)
 }
 
-func init() {
-	prometheus.MustRegister(totalRequests) // Alternatively use .Register and check errs
-}
-
 func main() {
+	prometheus.MustRegister(totalRequests) // Alternatively use .Register and check errs
 	http.Handle("/", handleHello())
 	http.Handle("/math", handleMath())
 	http.Handle("/work", handleWork())
