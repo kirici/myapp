@@ -11,9 +11,9 @@ services:
       POSTGRES_DB: 'myapp'
   myapp:
     build:
-      context: '.'
+      context: './'
       dockerfile: 'containerfile'
-    env_file: '.env'
+    env_file: './.env'
     ports:
       - '$PORT:$PORT'
   prometheus:
