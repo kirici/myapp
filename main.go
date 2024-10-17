@@ -14,7 +14,7 @@ import (
 var totalRequests = prometheus.NewCounterVec(
 	prometheus.CounterOpts{
 		Name: "http_requests_total",
-		Help: "Total number of GET requests by path.",
+		Help: "Total number of GET requests by HTTP code.",
 	},
 	[]string{"code"},
 )
