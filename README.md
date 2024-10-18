@@ -2,6 +2,8 @@
 
 Placeholder app to demo metrics instrumentation.
 
+![Screenshot of a Grafana dashboard.](./docs/static/grafana.png)
+
 ## Requirements
 
 A few tools are assumed to be available:
