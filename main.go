@@ -12,12 +12,21 @@ import (
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
-var reqsByCode = prometheus.NewCounterVec(
-	prometheus.CounterOpts{
-		Name: "http_requests_total",
-		Help: "Total number of GET requests by HTTP code.",
-	},
-	[]string{"code"},
+var (
+	reqsByCode = prometheus.NewCounterVec(
+		prometheus.CounterOpts{
+			Name: "http_requests_total",
+			Help: "Total number of successful GET requests by HTTP code.",
+		},
+		[]string{"code"},
+	)
+	errsByCode = prometheus.NewCounterVec(
+		prometheus.CounterOpts{
+			Name: "http_errors_total",
+			Help: "Total number of returned error responses (400 or higher), by code.",
+		},
+		[]string{"code"},
+	)
 )
 
 func prometheusMiddleware() gin.HandlerFunc {
@@ -25,6 +34,9 @@ func prometheusMiddleware() gin.HandlerFunc {
 		c.Next()
 		status := c.Writer.Status()
 		reqsByCode.WithLabelValues(strconv.Itoa(status)).Inc()
+		if status >= 400 {
+			errsByCode.WithLabelValues(strconv.Itoa(status)).Inc()
+		}
 	}
 }
 
