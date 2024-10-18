@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file. See [conventional commits](https://www.conventionalcommits.org/) for commit message semantics.
 
 ---
+## [1.0.0](https://github.com/kirici/myapp/compare/v0.3.0..v1.0.0) - 2024-10-18
+
+### Features
+
+- **(api)** [**breaking**] do not serve /math results over 0.8 - ([b0940ac](https://github.com/kirici/myapp/commit/b0940acc62babd3e7b5b4e6a31fb619aa97e14fc)) - kirici
+- **(app)** convert all api responses to json with gin-gonic context - ([b375684](https://github.com/kirici/myapp/commit/b37568456d511e797209df9a712bf532b2f342b2)) - kirici
+- **(obs)** add new counter metric for errors - ([0e4151b](https://github.com/kirici/myapp/commit/0e4151b71a924e082749b21dd706f99c223acbf2)) - kirici
+
+---
 ## [0.3.0](https://github.com/kirici/myapp/compare/v0.2.0..v0.3.0) - 2024-10-18
 
 ### Features
