@@ -1,18 +1,17 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"math/rand"
-	"net/http"
 	"os"
 	"time"
 
+	"github.com/gin-gonic/gin"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
-var totalRequests = prometheus.NewCounterVec(
+var reqsByCode = prometheus.NewCounterVec(
 	prometheus.CounterOpts{
 		Name: "http_requests_total",
 		Help: "Total number of GET requests by HTTP code.",
@@ -20,39 +19,31 @@ var totalRequests = prometheus.NewCounterVec(
 	[]string{"code"},
 )
 
-func handleHello() http.HandlerFunc {
-	return promhttp.InstrumentHandlerCounter(
-		totalRequests,
-		http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			fmt.Fprint(w, "Hello world!")
-		}),
-	)
+func handleHello(c *gin.Context) {
+	// reqsByCode.WithLabelValues(strconv.Itoa(http.StatusOK)).Inc()
+	reqsByCode.WithLabelValues("200").Inc()
+	c.JSON(200, "Hello world!")
 }
 
-func handleMath() http.HandlerFunc {
-	return promhttp.InstrumentHandlerCounter(
-		totalRequests,
-		http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			fmt.Fprint(w, rand.Float64()*rand.Float64())
-		}),
-	)
+func handleMath(c *gin.Context) {
+	reqsByCode.WithLabelValues("200").Inc()
+	// c.JSON(200, gin.H{"result": rand.Float64() * rand.Float64()})
+	c.JSON(200, rand.Float64()*rand.Float64())
 }
 
-func handleWork() http.HandlerFunc {
-	return promhttp.InstrumentHandlerCounter(
-		totalRequests,
-		http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			time.Sleep(time.Duration(rand.Intn(5)) * time.Second)
-			fmt.Fprint(w, "Done!")
-		}),
-	)
+func handleWork(c *gin.Context) {
+	time.Sleep(time.Duration(rand.Intn(5)) * time.Second)
+	reqsByCode.WithLabelValues("200").Inc()
+	c.JSON(200, "Done!")
 }
 
 func main() {
-	prometheus.MustRegister(totalRequests) // Alternatively use .Register and check errs
-	http.Handle("/", handleHello())
-	http.Handle("/math", handleMath())
-	http.Handle("/work", handleWork())
-	http.Handle("/metrics", promhttp.Handler())
-	log.Fatal(http.ListenAndServe(":"+os.Getenv("PORT"), nil))
+	prometheus.MustRegister(reqsByCode) // Alternatively move to init()
+	router := gin.Default()
+	router.GET("/", handleHello)
+	router.GET("/math", handleMath)
+	router.GET("/work", handleWork)
+	router.GET("/metrics", gin.WrapH(promhttp.Handler()))
+
+	log.Fatal(router.Run(":" + os.Getenv("PORT")))
 }
