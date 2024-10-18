@@ -4,6 +4,7 @@ import (
 	"log"
 	"math/rand"
 	"os"
+	"strconv"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -19,31 +20,39 @@ var reqsByCode = prometheus.NewCounterVec(
 	[]string{"code"},
 )
 
+func prometheusMiddleware() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		c.Next()
+		status := c.Writer.Status()
+		reqsByCode.WithLabelValues(strconv.Itoa(status)).Inc()
+	}
+}
+
 func handleHello(c *gin.Context) {
 	// reqsByCode.WithLabelValues(strconv.Itoa(http.StatusOK)).Inc()
-	reqsByCode.WithLabelValues("200").Inc()
 	c.JSON(200, "Hello world!")
 }
 
 func handleMath(c *gin.Context) {
-	reqsByCode.WithLabelValues("200").Inc()
 	// c.JSON(200, gin.H{"result": rand.Float64() * rand.Float64()})
 	c.JSON(200, rand.Float64()*rand.Float64())
 }
 
 func handleWork(c *gin.Context) {
 	time.Sleep(time.Duration(rand.Intn(5)) * time.Second)
-	reqsByCode.WithLabelValues("200").Inc()
 	c.JSON(200, "Done!")
 }
 
 func main() {
-	prometheus.MustRegister(reqsByCode) // Alternatively move to init()
 	router := gin.Default()
+	prometheus.MustRegister(reqsByCode) // Alternatively move to init()
+
+	router.GET("/metrics", gin.WrapH(promhttp.Handler()))
+	// Attach to all routes except prometheus itself
+	router.Use(prometheusMiddleware())
 	router.GET("/", handleHello)
 	router.GET("/math", handleMath)
 	router.GET("/work", handleWork)
-	router.GET("/metrics", gin.WrapH(promhttp.Handler()))
 
 	log.Fatal(router.Run(":" + os.Getenv("PORT")))
 }
