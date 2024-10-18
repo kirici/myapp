@@ -46,8 +46,12 @@ func handleHello(c *gin.Context) {
 }
 
 func handleMath(c *gin.Context) {
-	// c.JSON(200, gin.H{"result": rand.Float64() * rand.Float64()})
-	c.JSON(200, rand.Float64()*rand.Float64())
+	res := rand.Float64() * rand.Float64()
+	if res > 0.8 {
+		c.JSON(501, gin.H{"values over 0.8 not yet supported": res})
+		return
+	}
+	c.JSON(200, res)
 }
 
 func handleWork(c *gin.Context) {
