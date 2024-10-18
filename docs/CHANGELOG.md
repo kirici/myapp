@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file. See [conventional commits](https://www.conventionalcommits.org/) for commit message semantics.
 
 ---
+## [0.3.0](https://github.com/kirici/myapp/compare/v0.2.0..v0.3.0) - 2024-10-18
+
+### Features
+
+- **(app)** add simulated "/work" endpoint - ([64611b3](https://github.com/kirici/myapp/commit/64611b372fdf6473887e9252ec460d9e7fb3dcb8)) - kirici
+- **(obs)** bake panel for custom metrics into grafana db fixture - ([98cf451](https://github.com/kirici/myapp/commit/98cf4519d6b56b392652f0739235aafefa9b5ba2)) - kirici
+
+### Documentation
+
+- **(app)** fix metrics description - ([5cb5a21](https://github.com/kirici/myapp/commit/5cb5a21058e757197c23e65a082fa7297ac955f0)) - kirici
+
+---
 ## [0.2.0](https://github.com/kirici/myapp/compare/v0.1.0..v0.2.0) - 2024-10-16
 
 ### Features
