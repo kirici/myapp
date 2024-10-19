@@ -1,5 +1,6 @@
 services:
   postgres:
+    container_name: 'postgres'
     image: 'docker.io/library/postgres:16-bookworm'
     ports:
       - '5432:5432'
@@ -10,6 +11,7 @@ services:
       POSTGRES_PASSWORD: 'postgres'
       POSTGRES_DB: 'myapp'
   myapp:
+    container_name: 'web'
     build:
       context: './'
       dockerfile: 'containerfile'
@@ -17,6 +19,7 @@ services:
     ports:
       - '$PORT:$PORT'
   prometheus:
+    container_name: 'prometheus'
     image: 'docker.io/prom/prometheus:v2.54.1'
     ports:
       - '9090:9090'
@@ -28,6 +31,7 @@ services:
     depends_on:
       - 'myapp'
   grafana:
+    container_name: 'grafana'
     image: 'docker.io/grafana/grafana:11.2.2'
     ports:
       - '3000:3000'

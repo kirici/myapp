@@ -4,4 +4,4 @@ scrape_configs:
   - job_name: 'myapp'
     static_configs:
         # By default, handler '/metrics' will be called.
-      - targets: ['myapp_myapp_1:8080']
+      - targets: ['web:8080']
