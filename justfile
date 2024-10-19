@@ -1,3 +1,11 @@
+container := ```
+    if command -v docker >/dev/null 2>&1 ; then
+        echo "docker"
+    else
+        echo "podman"
+    fi
+    ```
+
 default:
     @just --list
 
@@ -5,13 +13,13 @@ changelog:
     git cliff --bump -c cliff.toml > docs/CHANGELOG.md
 
 up:
-    podman compose up -d
+    {{container}} compose up -d
 
 down:
-    podman compose down --volumes
+    {{container}} compose down --volumes
 
 refresh:
-    podman compose up --build --force-recreate -d
+    {{container}} compose up --build --force-recreate -d
 
 vegeta:
     vegeta attack -rate=2000/1s -duration=600s -targets targets.txt &>/dev/null
