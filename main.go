@@ -61,7 +61,7 @@ func handleWork(c *gin.Context) {
 
 func main() {
 	router := gin.Default()
-	prometheus.MustRegister(reqsByCode) // Alternatively move to init()
+	prometheus.MustRegister(reqsByCode, errsByCode) // Alternatively move to init()
 
 	router.GET("/metrics", gin.WrapH(promhttp.Handler()))
 	// Attach to all routes except prometheus itself
