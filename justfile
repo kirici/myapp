@@ -9,9 +9,6 @@ container := ```
 default:
     @just --list
 
-changelog:
-    git cliff --bump -c cliff.toml > docs/CHANGELOG.md
-
 up:
     {{container}} compose up -d
 
@@ -28,3 +25,6 @@ load-low:
 
 load-high:
     vegeta attack -rate=9001/1s -duration=300s -targets targets.txt &>/dev/null
+
+changelog:
+    git cliff --bump -c cliff.toml > docs/CHANGELOG.md
