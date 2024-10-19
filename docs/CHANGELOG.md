@@ -3,6 +3,19 @@
 All notable changes to this project will be documented in this file. See [conventional commits](https://www.conventionalcommits.org/) for commit message semantics.
 
 ---
+## [1.1.0](https://github.com/kirici/myapp/compare/v1.0.0..v1.1.0) - 2024-10-19
+
+### Features
+
+- **(obs)** convert grafana db fixture into provisioning files - ([6e362ed](https://github.com/kirici/myapp/commit/6e362ed4cb40c518c60b54631ccf636242ee1d4f)) - kirici
+- **(obs)** replace total count of http codes with rate - ([98f6e1f](https://github.com/kirici/myapp/commit/98f6e1f8a027873df49411de6ac2f8487261e38a)) - kirici
+
+### Documentation
+
+- add dashboard screenshot - ([3be7487](https://github.com/kirici/myapp/commit/3be74879b43ee654813686e60bac042e83206c9c)) - kirici
+- add changelog reference, explanations for optional tools - ([9c495d3](https://github.com/kirici/myapp/commit/9c495d355c96149f92debbe3a9d128aa7ca77e7c)) - kirici
+
+---
 ## [1.0.0](https://github.com/kirici/myapp/compare/v0.3.0..v1.0.0) - 2024-10-18
 
 ### Features
