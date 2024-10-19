@@ -18,8 +18,10 @@ up:
 down:
     {{container}} compose down --volumes
 
-refresh:
-    {{container}} compose up --build --force-recreate -d
+build:
+    {{container}} compose build
+
+refresh: build && up
 
 load-low:
     vegeta attack -rate=2000/1s -duration=600s -targets targets.txt &>/dev/null
