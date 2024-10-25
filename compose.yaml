@@ -39,7 +39,7 @@ services:
     container_name: 'grafana'
     image: 'docker.io/grafana/grafana:11.2.2'
     ports:
-      - '3000:3000'
+      - '$GRAFANA_PORT:3000'
     volumes:
       - './grafana/sources.yaml:/etc/grafana/provisioning/datasources/sources.yaml'
       - './grafana/dashboards.yaml:/etc/grafana/provisioning/dashboards/dashboards.yaml'
