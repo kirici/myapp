@@ -21,8 +21,13 @@ services:
   prometheus:
     container_name: 'prometheus'
     image: 'docker.io/prom/prometheus:v2.54.1'
+    command:
+      - "--web.listen-address=:${PROMETHEUS_PORT}"
+      # keeping default
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--storage.tsdb.path=/prometheus"
     ports:
-      - '9090:9090'
+      - '$PROMETHEUS_PORT:$PROMETHEUS_PORT'
     volumes:
       - './prometheus.yml:/etc/prometheus/prometheus.yml'
     environment:
@@ -39,6 +44,8 @@ services:
       - './grafana/sources.yaml:/etc/grafana/provisioning/datasources/sources.yaml'
       - './grafana/dashboards.yaml:/etc/grafana/provisioning/dashboards/dashboards.yaml'
       - './grafana/myapp.json:/etc/grafana/provisioning/dashboards/myapp.json'
+    environment:
+      - 'PROMETHEUS_PORT=$PROMETHEUS_PORT'
     depends_on:
       - 'myapp'
       - 'prometheus'
