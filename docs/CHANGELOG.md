@@ -3,6 +3,21 @@
 All notable changes to this project will be documented in this file. See [conventional commits](https://www.conventionalcommits.org/) for commit message semantics.
 
 ---
+## [1.2.0](https://github.com/kirici/myapp/compare/v1.1.0..v1.2.0) - 2024-10-25
+
+### Features
+
+- **(obs)** register error metric collector - ([82814d7](https://github.com/kirici/myapp/commit/82814d7e3c0353dc26656e5cc5f4c4b7f2831b43)) - kirici
+- **(obs)** replace label filtering with new http_errors_total metric - ([90edf63](https://github.com/kirici/myapp/commit/90edf63ae058006c5b25f5cfffcb3a4b99735050)) - kirici
+- **(tool)** just commands for containers check cli availability - ([4546b5c](https://github.com/kirici/myapp/commit/4546b5c567128f18576197f511da824e22acb037)) - kirici
+- **(tool)** add compose build command - ([7ba7fcb](https://github.com/kirici/myapp/commit/7ba7fcb76f5798bbda94e8b3e4e5baf57320a04d)) - kirici
+- **(tool)** posix-compliant output silencing - ([2a7d2a2](https://github.com/kirici/myapp/commit/2a7d2a2e44f1fa0b812161fb6307e2cc104feae9)) - kirici
+
+### Bug Fixes
+
+- **(ctr)** remove redundant and out-of-spec args key - ([fd75ac1](https://github.com/kirici/myapp/commit/fd75ac18c1326d8511dd25754d4e5a5a9eddc291)) - kirici
+
+---
 ## [1.1.0](https://github.com/kirici/myapp/compare/v1.0.0..v1.1.0) - 2024-10-19
 
 ### Features
