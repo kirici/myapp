@@ -200,7 +200,7 @@
           "sort": "none"
         },
         "xTickLabelRotation": 0,
-        "xTickLabelSpacing": 0
+        "xTickLabelSpacing": -100
       },
       "targets": [
         {
@@ -210,9 +210,10 @@
           },
           "disableTextWrap": false,
           "editorMode": "builder",
-          "expr": "rate(http_requests_total{code=\"200\"}[$__rate_interval])",
+          "expr": "sum(http_requests_total)",
           "fullMetaSearch": false,
-          "includeNullMetadata": false,
+          "hide": false,
+          "includeNullMetadata": true,
           "instant": false,
           "legendFormat": "__auto",
           "range": true,
@@ -226,31 +227,14 @@
           },
           "disableTextWrap": false,
           "editorMode": "builder",
-          "expr": "rate(http_requests_total{code=\"501\"}[$__rate_interval])",
+          "expr": "sum(http_errors_total)",
           "fullMetaSearch": false,
           "hide": false,
-          "includeNullMetadata": false,
+          "includeNullMetadata": true,
           "instant": false,
           "legendFormat": "__auto",
           "range": true,
           "refId": "B",
-          "useBackend": false
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "be1abogsemnswc"
-          },
-          "disableTextWrap": false,
-          "editorMode": "builder",
-          "expr": "rate(http_requests_total{code=\"404\"}[$__rate_interval])",
-          "fullMetaSearch": false,
-          "hide": false,
-          "includeNullMetadata": false,
-          "instant": false,
-          "legendFormat": "__auto",
-          "range": true,
-          "refId": "C",
           "useBackend": false
         }
       ],
@@ -1235,9 +1219,13 @@
       {
         "allValue": ".*",
         "current": {
-          "selected": false,
-          "text": "All",
-          "value": "$__all"
+          "selected": true,
+          "text": [
+            "All"
+          ],
+          "value": [
+            "$__all"
+          ]
         },
         "datasource": {
           "type": "prometheus",
@@ -1262,9 +1250,13 @@
       {
         "allValue": ".*",
         "current": {
-          "selected": false,
-          "text": "All",
-          "value": "$__all"
+          "selected": true,
+          "text": [
+            "All"
+          ],
+          "value": [
+            "$__all"
+          ]
         },
         "datasource": {
           "type": "prometheus",
