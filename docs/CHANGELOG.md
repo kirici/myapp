@@ -3,6 +3,24 @@
 All notable changes to this project will be documented in this file. See [conventional commits](https://www.conventionalcommits.org/) for commit message semantics.
 
 ---
+## [1.3.0](https://github.com/kirici/myapp/compare/v1.2.0..v1.3.0) - 2024-10-26
+
+### Features
+
+- **(conf)** add export statements for a maximally-compatible .env file - ([076f195](https://github.com/kirici/myapp/commit/076f1951756d9231b3f50b6499a5216f9a872744)) - kirici
+- **(obs)** add new histogram metric for request latencies - ([c452769](https://github.com/kirici/myapp/commit/c452769a20e6312840b3e82c51946f9f8a1f1cbd)) - kirici
+- **(obs)** add new dashboard with api metrics only - ([0f918af](https://github.com/kirici/myapp/commit/0f918af0d8c17ca1a2451372c8a719f161e684a9)) - kirici
+- **(tool)** load sample .env file as default, overwrite afterwards - ([0ec3e05](https://github.com/kirici/myapp/commit/0ec3e05c182eb597c81624911de0bc0dec409fb3)) - kirici
+
+### Documentation
+
+- update usage instructions with regards to env vars - ([96144b9](https://github.com/kirici/myapp/commit/96144b9cf6e46c01c72507a301a571335ef77e40)) - kirici
+
+### Revert
+
+- **(conf)** non-default port for grafana - ([2f474a3](https://github.com/kirici/myapp/commit/2f474a33bf6b71198022b074fe2114945991b359)) - kirici
+
+---
 ## [1.2.0](https://github.com/kirici/myapp/compare/v1.1.0..v1.2.0) - 2024-10-25
 
 ### Features
