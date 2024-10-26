@@ -1,4 +1,0 @@
-GET http://localhost:8080/
-GET http://localhost:8080/math
-GET http://localhost:8080/work
-GET http://localhost:8080/doesnotexist

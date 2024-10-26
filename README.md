@@ -18,7 +18,7 @@ Optional:
 - [direnv.net](https://github.com/direnv/direnv) - autom. loads environment variables 
 - [git-cliff.org](https://github.com/orhun/git-cliff) - to generate the changelogs
 - [just.systems](https://github.com/casey/just) - convenience tool to run commands
-- [vegeta](https://github.com/tsenart/vegeta) - for synthetic load testing
+- [k6](https://github.com/grafana/k6) - for synthetic load testing
 
 ## Usage
 

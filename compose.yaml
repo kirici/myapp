@@ -15,6 +15,7 @@ services:
     build:
       context: './'
       dockerfile: 'containerfile'
+    image: 'myapp/web'
     environment:
       - 'PORT=$PORT'
       - 'DB_URL=$DB_URL'
@@ -52,7 +53,18 @@ services:
     environment:
       - 'PROMETHEUS_PORT=$PROMETHEUS_PORT'
     depends_on:
-      - 'myapp'
       - 'prometheus'
+  k6:
+    container_name: 'k6'
+    image: 'docker.io/grafana/k6:0.54.0'
+    volumes:
+      - './k6-script.js:/k6-script.js'
+    command: 
+      - 'run'
+      - '/k6-script.js'
+    environment:
+      - 'PORT=$PORT'
+    depends_on:
+      - 'grafana'
 volumes:
   myapp-pg:
