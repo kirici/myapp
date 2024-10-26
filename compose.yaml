@@ -28,6 +28,7 @@ services:
     image: 'docker.io/prom/prometheus:v2.54.1'
     command:
       - "--web.listen-address=:${PROMETHEUS_PORT}"
+      - "--web.enable-remote-write-receiver"
       # keeping default
       - "--config.file=/etc/prometheus/prometheus.yml"
       - "--storage.tsdb.path=/prometheus"
@@ -61,9 +62,13 @@ services:
       - './k6-script.js:/k6-script.js'
     command: 
       - 'run'
+      - '-o'
+      - 'experimental-prometheus-rw'
       - '/k6-script.js'
     environment:
       - 'PORT=$PORT'
+      - 'K6_PROMETHEUS_RW_SERVER_URL=$K6_PROMETHEUS_RW_SERVER_URL'
+      - 'K6_PROMETHEUS_RW_TREND_AS_NATIVE_HISTOGRAM=$K6_PROMETHEUS_RW_TREND_AS_NATIVE_HISTOGRAM'
     depends_on:
       - 'grafana'
 volumes:
