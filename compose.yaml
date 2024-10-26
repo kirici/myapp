@@ -44,6 +44,7 @@ services:
       - './grafana/sources.yaml:/etc/grafana/provisioning/datasources/sources.yaml'
       - './grafana/dashboards.yaml:/etc/grafana/provisioning/dashboards/dashboards.yaml'
       - './grafana/myapp.json:/etc/grafana/provisioning/dashboards/myapp.json'
+      - './grafana/myapp-api.json:/etc/grafana/provisioning/dashboards/myapp-api.json'
     environment:
       - 'PROMETHEUS_PORT=$PROMETHEUS_PORT'
     depends_on:
