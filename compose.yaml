@@ -15,7 +15,11 @@ services:
     build:
       context: './'
       dockerfile: 'containerfile'
-    env_file: './.env'
+    environment:
+      - 'PORT=$PORT'
+      - 'DB_URL=$DB_URL'
+      - 'GOMAXPROCS=$GOMAXPROCS'
+      - 'GOMEMLIMIT=$GOMEMLIMIT'
     ports:
       - '$PORT:$PORT'
   prometheus:
