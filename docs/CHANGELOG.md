@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file. See [conventional commits](https://www.conventionalcommits.org/) for commit message semantics.
 
 ---
+## [1.4.0](https://github.com/kirici/myapp/compare/v1.3.0..v1.4.0) - 2024-10-26
+
+### Features
+
+- **(obs)** enable remote-writing k6 metrics to prometheus - ([b934441](https://github.com/kirici/myapp/commit/b9344419e9437849f21fe1a4a5f09fca45ba549e)) - kirici
+- **(obs)** use $__rate_interval for graph rates over hardcoded time durations - ([94f48d7](https://github.com/kirici/myapp/commit/94f48d7ff8c2af1c03d1f658a202735352a28a20)) - kirici
+- **(obs)** add k6 client metrics, row separators - ([a821726](https://github.com/kirici/myapp/commit/a8217264fd1df41ba95a40a2ef6cf8d83aaa76cb)) - kirici
+- **(tool)** replace vegeta with grafanalabs' k6 - ([a0b2ff9](https://github.com/kirici/myapp/commit/a0b2ff918d9e1cc049dc9761e6c4edc2e32de608)) - kirici
+
+---
 ## [1.3.0](https://github.com/kirici/myapp/compare/v1.2.0..v1.3.0) - 2024-10-26
 
 ### Features
