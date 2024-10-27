@@ -12,16 +12,19 @@ default:
 up:
     {{container}} compose up -d
 
+up-all:
+    {{container}} compose --profile test up -d
+
 down:
-    {{container}} compose down --volumes
+    {{container}} compose --profile test down --volumes
 
 build:
     {{container}} compose build
 
 refresh: build && up
 
-restart-load:
-    {{container}} compose restart k6
+test:
+    {{container}} compose --profile test up -d k6
 
 changelog:
     git cliff --bump -c cliff.toml > docs/CHANGELOG.md
