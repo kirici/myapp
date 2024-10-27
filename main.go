@@ -70,7 +70,7 @@ func handleMath(c *gin.Context) {
 }
 
 func handleWork(c *gin.Context) {
-	time.Sleep(time.Duration(rand.Intn(5)) * time.Second)
+	time.Sleep(time.Duration(rand.Intn(5)) * time.Millisecond)
 	c.JSON(200, "Done!")
 }
 
