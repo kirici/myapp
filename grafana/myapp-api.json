@@ -477,7 +477,7 @@
           "disableTextWrap": false,
           "editorMode": "builder",
           "exemplar": false,
-          "expr": "rate(k6_http_req_duration_p99[$__rate_interval])",
+          "expr": "sum by(name) (rate(k6_http_req_duration_p99[$__rate_interval]))",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
           "instant": false,
@@ -619,6 +619,6 @@
   "timezone": "",
   "title": "API Monitoring Dashboard - Golden Signals",
   "uid": "ae212by0gag3kb",
-  "version": 3,
+  "version": 1,
   "weekStart": ""
 }
