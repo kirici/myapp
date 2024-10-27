@@ -56,6 +56,7 @@ services:
     depends_on:
       - 'prometheus'
   k6:
+    profiles: [test]
     container_name: 'k6'
     image: 'docker.io/grafana/k6:0.54.0'
     volumes:
