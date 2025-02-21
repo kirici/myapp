@@ -3,7 +3,26 @@
 All notable changes to this project will be documented in this file. See [conventional commits](https://www.conventionalcommits.org/) for commit message semantics.
 
 ---
-## [1.4.0](https://github.com/kirici/myapp/compare/v1.3.0..v1.4.0) - 2024-10-26
+## [1.5.0](https://github.com/kirici/myapp/compare/v1.4.0..v1.5.0) - 2025-02-21
+
+### Features
+
+- **(ctr)** set profile for k6 service - ([67ab155](https://github.com/kirici/myapp/commit/67ab155a454902f8f18084b03af3c133d637634b)) - kirici
+- **(obs)** smoothen curves - ([916dee3](https://github.com/kirici/myapp/commit/916dee380ad59042bada88c201b5020ad3ec3de8)) - kirici
+- **(obs)** sum client latency metrics by path - ([3535f1f](https://github.com/kirici/myapp/commit/3535f1f78e32a78c45f1cddafa6100d5c0e314a2)) - kirici
+- **(obs)** add axis unit - ([056e9f4](https://github.com/kirici/myapp/commit/056e9f4ac6fac68c0020fcb977325f7307438b2e)) - kirici
+- **(tool)** add, adjust commands for test profile - ([cbc0889](https://github.com/kirici/myapp/commit/cbc0889182d15874414c66080892b7d7fbd94c30)) - kirici
+
+### Performance
+
+- **(app)** work speed increased by 3 orders of magnitude - ([6450a8d](https://github.com/kirici/myapp/commit/6450a8d28de55da3703154ebb57c40ec57841d53)) - kirici
+
+### Documentation
+
+- update screenshot - ([4799188](https://github.com/kirici/myapp/commit/47991886557a084f2c9b257544cbec6d29926d19)) - kirici
+
+---
+## [1.4.0](https://github.com/kirici/myapp/compare/v1.3.0..v1.4.0) - 2025-02-21
 
 ### Features
 
