@@ -1,7 +1,7 @@
 %global project	https://github.com/kirici/myapp
 
 Name:           myapp
-Version:        1.6.0
+Version:        1.6.1
 Release:        1%{?dist}
 Summary:        Placeholder application
 
@@ -10,6 +10,7 @@ URL:            %{project}
 Source0:        %{project}/archive/refs/tags/v%{version}.tar.gz
 
 BuildRequires:  golang
+BuildRequires:  git
 
 Provides:       %{name} = %{version}
 
