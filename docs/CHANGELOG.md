@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file. See [conventional commits](https://www.conventionalcommits.org/) for commit message semantics.
 
 ---
+## [1.6.0](https://github.com/kirici/myapp/compare/v1.5.0..v1.6.0) - 2025-02-22
+
+### Features
+
+- **(tool)** extend changelog into release task - ([cf2865c](https://github.com/kirici/myapp/commit/cf2865c125e7c244761e73fa98bbf3096ce5b1c5)) - kirici
+
+---
 ## [1.5.0](https://github.com/kirici/myapp/compare/v1.4.0..v1.5.0) - 2025-02-21
 
 ### Features
