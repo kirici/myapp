@@ -1,10 +1,13 @@
+%global project	https://github.com/kirici/myapp
+
 Name:           myapp
 Version:        1.5.0
 Release:        1%{?dist}
 Summary:        Placeholder application
 
 License:        GPLv3
-Source0:        %{name}-%{version}.tar.gz
+URL:            %{project}
+Source0:        %{project}/archive/refs/tags/v%{version}.tar.gz
 
 BuildRequires:  golang
 
