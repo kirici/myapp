@@ -26,5 +26,8 @@ refresh: build && up
 test:
     {{container}} compose --profile test up -d k6
 
-changelog:
-    git cliff --bump -c cliff.toml > docs/CHANGELOG.md
+release:
+    git cliff -c cliff.toml --bump > docs/CHANGELOG.md
+    git add docs/CHANGELOG.md
+    git commit -S -m "release: add changelog for $(git-cliff --bumped-version)"
+    git tag $(git-cliff --bumped-version) -m "Release $(git-cliff --bumped-version)"
