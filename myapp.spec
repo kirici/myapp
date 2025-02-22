@@ -1,7 +1,7 @@
 Name:           myapp
-Version:        1.4
+Version:        1.5.0
 Release:        1%{?dist}
-Summary:        A simple web app
+Summary:        Placeholder application
 
 License:        GPLv3
 Source0:        %{name}-%{version}.tar.gz
