@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file. See [conventional commits](https://www.conventionalcommits.org/) for commit message semantics.
 
 ---
+## [1.7.0](https://github.com/kirici/myapp/compare/v1.6.1..v1.7.0) - 2026-10-11
+
+### Features
+
+- **(ctr)** simplify, add ignore file - ([a5746b9](https://github.com/kirici/myapp/commit/a5746b9a973c0c3099a6027d2d63ed9d0ad264e9)) - Burak Kirici
+- **(ctr)** update db, obs, test dependencies - ([6890dcd](https://github.com/kirici/myapp/commit/6890dcd29db1b398a407e956fd903e320d588577)) - Burak Kirici
+- **(ctr)** handle mounts in selinux-active setups - ([08442b1](https://github.com/kirici/myapp/commit/08442b14a925e7c15bf388eebc86758464029200)) - Burak Kirici
+
+---
 ## [1.6.0](https://github.com/kirici/myapp/compare/v1.5.0..v1.6.0) - 2025-02-22
 
 ### Features
