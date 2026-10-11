@@ -19,7 +19,6 @@ services:
     environment:
       - 'PORT=$PORT'
       - 'DB_URL=$DB_URL'
-      - 'GOMAXPROCS=$GOMAXPROCS'
       - 'GOMEMLIMIT=$GOMEMLIMIT'
     ports:
       - '$PORT:$PORT'
@@ -37,7 +36,6 @@ services:
     volumes:
       - './prometheus.yml:/etc/prometheus/prometheus.yml'
     environment:
-      - 'GOMAXPROCS=$GOMAXPROCS'
       - 'GOMEMLIMIT=$GOMEMLIMIT'
     depends_on:
       - 'myapp'
