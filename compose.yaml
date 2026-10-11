@@ -34,7 +34,9 @@ services:
     ports:
       - '$PROMETHEUS_PORT:$PROMETHEUS_PORT'
     volumes:
-      - './prometheus.yml:/etc/prometheus/prometheus.yml'
+      # The :z suffix relabels the file for SELinux. Without it, rootless podman on an SELinux host (Fedora, RHEL)
+      # denies the container read access, which surfaces as "permission denied" on the bind-mounted config.
+      - './prometheus.yml:/etc/prometheus/prometheus.yml:z'
     environment:
       - 'GOMEMLIMIT=$GOMEMLIMIT'
     depends_on:
@@ -45,10 +47,11 @@ services:
     ports:
       - '$GRAFANA_PORT:3000'
     volumes:
-      - './grafana/sources.yaml:/etc/grafana/provisioning/datasources/sources.yaml'
-      - './grafana/dashboards.yaml:/etc/grafana/provisioning/dashboards/dashboards.yaml'
-      - './grafana/myapp.json:/etc/grafana/provisioning/dashboards/myapp.json'
-      - './grafana/myapp-api.json:/etc/grafana/provisioning/dashboards/myapp-api.json'
+      # Same SELinux relabeling as the Prometheus config above.
+      - './grafana/sources.yaml:/etc/grafana/provisioning/datasources/sources.yaml:z'
+      - './grafana/dashboards.yaml:/etc/grafana/provisioning/dashboards/dashboards.yaml:z'
+      - './grafana/myapp.json:/etc/grafana/provisioning/dashboards/myapp.json:z'
+      - './grafana/myapp-api.json:/etc/grafana/provisioning/dashboards/myapp-api.json:z'
     environment:
       - 'PROMETHEUS_PORT=$PROMETHEUS_PORT'
     depends_on:
@@ -58,7 +61,7 @@ services:
     container_name: 'k6'
     image: 'docker.io/grafana/k6:2.3.0'
     volumes:
-      - './k6-script.js:/k6-script.js'
+      - './k6-script.js:/k6-script.js:z'
     command: 
       - 'run'
       - '-o'
