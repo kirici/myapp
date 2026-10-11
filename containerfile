@@ -1,48 +1,20 @@
 # Stage 1
-# FROM golang:1.23-alpine3.20 AS BUILD
-FROM golang:alpine AS BUILD
-
-ENV CGO_ENABLED=0
-ENV GOOS=linux
-ENV GOARCH=amd64
-
+# Podman sets BUILDPLATFORM, TARGETOS and TARGETARCH automatically
+FROM --platform=$BUILDPLATFORM golang:alpine AS BUILD
+ARG TARGETOS TARGETARCH
+ENV CGO_ENABLED=0 GOOS=$TARGETOS GOARCH=$TARGETARCH
 WORKDIR /src
 
-# Cache dependencies
-COPY go.mod .
-# COPY go.sum .
-RUN go mod download
+COPY go.* ./
+RUN --mount=type=cache,target=/go/pkg/mod go mod download
 
-# Copy actual source
 COPY . .
-
-RUN CGO_ENABLED=${CGO_ENABLED} GOOS=${GOOS} GOARCH=${GOARCH} go build -ldflags='-s -w -extldflags "-static"' -o ./out/bin .
+RUN --mount=type=cache,target=/go/pkg/mod --mount=type=cache,target=/root/.cache/go-build go build -trimpath -ldflags='-s -w' -o /out/bin .
 
 # Stage 2
-# FROM alpine:3.20
-FROM alpine:latest
-
+FROM gcr.io/distroless/static-debian13:nonroot
 ARG PORT=8080
-
-WORKDIR /app
-
-RUN addgroup gopher_group \
-  && adduser -S gopher -u 1000 -G gopher_group
-
-RUN apk update \
-  && apk -U upgrade \
-  && apk add --no-cache ca-certificates \
-  && update-ca-certificates --fresh \
-  && rm -rf /var/cache/apk/*
-
-COPY --from=BUILD /src/out/bin .
-
-RUN chmod +x ./bin
-
-USER gopher
-
+ENV PORT=${PORT}
+COPY --from=BUILD /out/bin /app/bin
 EXPOSE ${PORT}
-# executable for the image
 ENTRYPOINT ["/app/bin"]
-# default arguments for the executable, if applicable
-# CMD [ "run" ]
