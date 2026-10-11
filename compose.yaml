@@ -1,11 +1,11 @@
 services:
   postgres:
     container_name: 'postgres'
-    image: 'docker.io/library/postgres:16-bookworm'
+    image: 'docker.io/library/postgres:18-trixie'
     ports:
       - '5432:5432'
     volumes:
-      - 'myapp-pg:/var/lib/postgresql/data'
+      - 'myapp-pg:/var/lib/postgresql/18'
     environment:
       POSTGRES_USER: 'postgres'
       POSTGRES_PASSWORD: 'postgres'
@@ -24,7 +24,7 @@ services:
       - '$PORT:$PORT'
   prometheus:
     container_name: 'prometheus'
-    image: 'docker.io/prom/prometheus:v2.54.1'
+    image: 'docker.io/prom/prometheus:v3.14.0'
     command:
       - "--web.listen-address=:${PROMETHEUS_PORT}"
       - "--web.enable-remote-write-receiver"
@@ -41,7 +41,7 @@ services:
       - 'myapp'
   grafana:
     container_name: 'grafana'
-    image: 'docker.io/grafana/grafana:11.2.2'
+    image: 'docker.io/grafana/grafana:13.2.3'
     ports:
       - '$GRAFANA_PORT:3000'
     volumes:
@@ -56,7 +56,7 @@ services:
   k6:
     profiles: [test]
     container_name: 'k6'
-    image: 'docker.io/grafana/k6:0.54.0'
+    image: 'docker.io/grafana/k6:2.3.0'
     volumes:
       - './k6-script.js:/k6-script.js'
     command: 
