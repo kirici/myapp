@@ -1,0 +1,16 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: myapp
+
+resources:
+  - job.yaml
+
+# Kept out of the main kustomization so `up` doesn't run a load test; this plays the role of the compose `test` profile.
+# The env file is reused rather than duplicated so the k6 settings can't drift from the rest of the stack.
+configMapGenerator:
+  - name: k6-config
+    envs:
+      - ../config.env
+  - name: k6-script
+    files:
+      - k6-script.js=../../k6-script.js

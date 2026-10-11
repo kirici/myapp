@@ -1,0 +1,42 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: k6
+spec:
+  # A failed load test should fail loudly once, not be retried into a different result.
+  backoffLimit: 0
+  template:
+    spec:
+      restartPolicy: Never
+      enableServiceLinks: false
+      containers:
+        - name: k6
+          image: docker.io/grafana/k6:2.3.0
+          args:
+            - run
+            - -o
+            - experimental-prometheus-rw
+            - /scripts/k6-script.js
+          env:
+            - name: PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: k6-config
+                  key: PORT
+            - name: K6_PROMETHEUS_RW_SERVER_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: k6-config
+                  key: K6_PROMETHEUS_RW_SERVER_URL
+            - name: K6_PROMETHEUS_RW_TREND_AS_NATIVE_HISTOGRAM
+              valueFrom:
+                configMapKeyRef:
+                  name: k6-config
+                  key: K6_PROMETHEUS_RW_TREND_AS_NATIVE_HISTOGRAM
+          volumeMounts:
+            - name: script
+              mountPath: /scripts
+      volumes:
+        - name: script
+          configMap:
+            name: k6-script

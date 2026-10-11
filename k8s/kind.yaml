@@ -1,0 +1,12 @@
+---
+kind: Cluster
+apiVersion: kind.x-k8s.io/v1alpha4
+networking:
+  kubeProxyMode: "nftables"
+nodes:
+- role: control-plane
+  # cloud-provider-kind never targets control-plane nodes (they carry the exclude-from-external-load-balancers label),
+  # so without a worker every LoadBalancer Service would come up with no backends.
+- role: worker
+- role: worker
+

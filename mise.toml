@@ -1,5 +1,10 @@
 [tools]
 git-cliff = "latest"
+kubectl = "1.37"
+# kind's default node image follows the kind release, so pinning kind also pins the Kubernetes version of the cluster.
+# kubectl stays within one minor version of that, which is what its version-skew policy supports.
+kind = "0.33.0"
+"aqua:kubernetes-sigs/cloud-provider-kind" = "0.12.0"
 
 [env]
 # Set defaults
@@ -17,30 +22,148 @@ _.file = ".env"
 # Prefer docker when installed, otherwise fall back to podman. Kept in vars (not env) so the check only runs when a
 # task is executed rather than on every shell activation.
 container = "{{ exec(command='command -v docker >/dev/null 2>&1 && echo docker || echo podman') }}"
+cluster = "myapp"
+# Must match the image in k8s/web.yaml.
+image = "localhost/myapp/web:dev"
+# Tell kind which runtime to use instead of letting it auto-detect, so it always agrees with the `container` choice.
+kind = "KIND_EXPERIMENTAL_PROVIDER={{vars.container}} kind"
+kubectl = "kubectl --context kind-{{vars.cluster}}"
 
-[tasks.up]
-description = "Start the default compose services"
-run = "{{vars.container}} compose up -d"
+[tasks.cluster]
+description = "Create the kind cluster if it doesn't exist yet"
+run = '''
+{{vars.kind}} get clusters | grep -qx {{vars.cluster}} || {{vars.kind}} create cluster --config k8s/kind.yaml
+{{vars.kubectl}} wait --for=condition=Ready nodes --all --timeout=120s
+'''
 
-[tasks.up-all]
-description = "Start all services including the test profile"
-run = "{{vars.container}} compose --profile test up -d"
-
-[tasks.down]
-description = "Stop everything, including the test profile, and remove volumes"
-run = "{{vars.container}} compose --profile test down --volumes"
+[tasks.destroy]
+description = "Delete the kind cluster and everything in it"
+run = "{{vars.kind}} delete cluster --name {{vars.cluster}}"
 
 [tasks.build]
-description = "Build the compose images"
-run = "{{vars.container}} compose build"
+description = "Build the web image"
+run = "{{vars.container}} build --tag {{vars.image}} --file containerfile ."
+
+[tasks.load]
+description = "Load the web image into the kind nodes"
+shell = "bash -c"
+run = '''
+set -euo pipefail
+
+# `kind load docker-image` shells out to a literal `docker` binary, which a podman-only host doesn't have. Going through
+# an archive works for both runtimes.
+archive="$(mktemp --suffix=.tar)"
+trap 'rm -f "${archive}"' EXIT
+
+{{vars.container}} save --output "${archive}" {{vars.image}}
+{{vars.kind}} load image-archive "${archive}" --name {{vars.cluster}}
+'''
+
+[tasks.deploy]
+description = "Apply the Kubernetes manifests and wait until everything is ready"
+shell = "bash -c"
+run = '''
+set -euo pipefail
+
+# The config files live outside k8s/, which kustomize only reads with the load restrictor off. Server-side apply keeps
+# large dashboard JSON out of the last-applied annotation, which has a 256 KiB limit.
+{{vars.kubectl}} kustomize --load-restrictor LoadRestrictionsNone k8s | {{vars.kubectl}} apply --server-side --filename -
+
+for workload in statefulset/postgres deployment/web deployment/prometheus deployment/grafana; do
+  {{vars.kubectl}} --namespace myapp rollout status "${workload}" --timeout=180s
+done
+'''
+
+[tasks.restart]
+description = "Restart the web pods so they pick up a freshly loaded image"
+run = '''
+{{vars.kubectl}} --namespace myapp rollout restart deployment/web
+{{vars.kubectl}} --namespace myapp rollout status deployment/web --timeout=180s
+'''
+
+[tasks.up]
+description = "Create the cluster if needed, then build, load and deploy the stack"
+run = [{ task = "cluster" }, { task = "build" }, { task = "load" }, { task = "deploy" }]
+
+[tasks.up-all]
+description = "Bring the stack up and run the k6 load test"
+run = [{ task = "up" }, { task = "test" }]
+
+[tasks.down]
+description = "Remove the stack and its volumes, keeping the cluster"
+run = "{{vars.kubectl}} delete namespace myapp --ignore-not-found"
 
 [tasks.refresh]
-description = "Rebuild images, then start services"
-run = [{ task = "build" }, { task = "up" }]
+description = "Rebuild the image, load it, redeploy and restart the web pods"
+# The tag stays `dev` across builds, so the Deployment spec doesn't change and needs the explicit restart.
+run = [{ task = "build" }, { task = "load" }, { task = "deploy" }, { task = "restart" }]
 
 [tasks.test]
-description = "Run the k6 load test"
-run = "{{vars.container}} compose --profile test up -d k6"
+description = "Run the k6 load test and stream its output"
+shell = "bash -c"
+run = '''
+set -euo pipefail
+
+# A Job's pod template is immutable, so the previous run has to go before the same Job can be applied again.
+{{vars.kubectl}} --namespace myapp delete job k6 --ignore-not-found
+{{vars.kubectl}} kustomize --load-restrictor LoadRestrictionsNone k8s/test \
+  | {{vars.kubectl}} apply --server-side --filename -
+
+# `logs --follow` errors while the container is still being created, so keep retrying until it attaches.
+for _ in $(seq 60); do
+  {{vars.kubectl}} --namespace myapp logs --follow job/k6 2>/dev/null && break
+  sleep 2
+done
+'''
+
+[tasks.lb]
+description = "Run cloud-provider-kind to give LoadBalancer Services an address (keeps running; use a spare terminal)"
+shell = "bash -c"
+run = '''
+set -euo pipefail
+
+runtime="{{vars.container}}"
+binary="$(command -v cloud-provider-kind)"
+export KIND_EXPERIMENTAL_PROVIDER="${runtime}"
+
+if [[ "${runtime}" == podman ]]; then
+  {% raw %}
+  rootless="$(podman info --format '{{.Host.Security.Rootless}}')"
+  socket="$(podman info --format '{{.Host.RemoteSocket.Path}}')"
+  {% endraw %}
+
+  if [[ "${rootless}" == true ]]; then
+    # Rootless nodes sit on a network the host can't route to, so the load balancer addresses are only reachable if
+    # cloud-provider-kind runs as root and publishes them on loopback. Root can't see the user's rootless socket on its
+    # own, so it is handed over explicitly. `env` is used because sudo may refuse to pass variables through itself.
+    [[ -S "${socket}" ]] || {
+      echo "podman socket not found at ${socket}; enable it with: systemctl --user enable --now podman.socket" >&2
+      exit 1
+    }
+    exec sudo env KIND_EXPERIMENTAL_PROVIDER=podman CONTAINER_HOST="unix://${socket}" "${binary}"
+  fi
+fi
+
+exec "${binary}"
+'''
+
+[tasks.urls]
+description = "Print the address of each LoadBalancer Service"
+shell = "bash -c"
+run = '''
+set -euo pipefail
+
+for service in web grafana prometheus; do
+  ip="$({{vars.kubectl}} --namespace myapp get service "${service}" \
+    --output jsonpath='{.status.loadBalancer.ingress[0].ip}')"
+  port="$({{vars.kubectl}} --namespace myapp get service "${service}" --output jsonpath='{.spec.ports[0].port}')"
+  printf '%-12s http://%s:%s\n' "${service}" "${ip:-<pending>}" "${port}"
+done
+'''
+
+[tasks.db]
+description = "Forward Postgres to localhost:5432 (keeps running)"
+run = "{{vars.kubectl}} --namespace myapp port-forward pod/postgres-0 5432:5432"
 
 [tasks.release]
 description = "Generate the changelog, commit it, and tag the bumped version"

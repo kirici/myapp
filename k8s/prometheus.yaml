@@ -1,0 +1,75 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: prometheus
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: prometheus
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: prometheus
+    spec:
+      # Without this Kubernetes injects PROMETHEUS_PORT=tcp://<ip>:9090 for the Service below, which would shadow the
+      # plain port number that the flags (and Grafana's datasource config) expect.
+      enableServiceLinks: false
+      securityContext:
+        # The image runs as nobody; fsGroup makes the emptyDir writable for it.
+        runAsNonRoot: true
+        runAsUser: 65534
+        fsGroup: 65534
+      containers:
+        - name: prometheus
+          image: docker.io/prom/prometheus:v3.14.0
+          # Setting args replaces the image's default flags, so the config and storage paths are repeated.
+          args:
+            - --web.listen-address=:$(PROMETHEUS_PORT)
+            - --web.enable-remote-write-receiver
+            - --config.file=/etc/prometheus/prometheus.yml
+            - --storage.tsdb.path=/prometheus
+          ports:
+            - name: http
+              containerPort: 9090
+          env:
+            - name: PROMETHEUS_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: myapp-config
+                  key: PROMETHEUS_PORT
+            - name: GOMEMLIMIT
+              valueFrom:
+                configMapKeyRef:
+                  name: myapp-config
+                  key: GOMEMLIMIT
+          readinessProbe:
+            httpGet:
+              path: /-/ready
+              port: http
+            periodSeconds: 5
+          volumeMounts:
+            - name: config
+              mountPath: /etc/prometheus
+            - name: data
+              mountPath: /prometheus
+      volumes:
+        - name: config
+          configMap:
+            name: prometheus-config
+        # Compose didn't persist Prometheus data either, so metrics reset with the pod.
+        - name: data
+          emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: prometheus
+spec:
+  type: LoadBalancer
+  selector:
+    app.kubernetes.io/name: prometheus
+  ports:
+    - name: http
+      port: 9090
+      targetPort: http

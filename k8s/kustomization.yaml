@@ -1,0 +1,34 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: myapp
+
+resources:
+  - namespace.yaml
+  - postgres.yaml
+  - web.yaml
+  - prometheus.yaml
+  - grafana.yaml
+
+# The config files stay where they were for compose (repo root), hence the ../ paths. Kustomize refuses to read outside
+# its own directory by default, so build with --load-restrictor LoadRestrictionsNone (the mise tasks do).
+# The generators append a content hash to each name, so editing one of these files rolls the pods that use it.
+configMapGenerator:
+  - name: myapp-config
+    envs:
+      - config.env
+  - name: prometheus-config
+    files:
+      - prometheus.yml=../prometheus.yml
+  - name: grafana-datasources
+    files:
+      - sources.yaml=../grafana/sources.yaml
+  - name: grafana-dashboards
+    files:
+      - dashboards.yaml=../grafana/dashboards.yaml
+      - myapp.json=../grafana/myapp.json
+      - myapp-api.json=../grafana/myapp-api.json
+
+secretGenerator:
+  - name: myapp-secrets
+    envs:
+      - secrets.env
