@@ -1,0 +1,58 @@
+[tools]
+git-cliff = "latest"
+
+[env]
+# Set defaults
+PORT = 8080
+GOMEMLIMIT = "12GiB"
+PROMETHEUS_PORT = 9090
+GRAFANA_PORT = 3000
+K6_PROMETHEUS_RW_SERVER_URL = "http://prometheus:${PROMETHEUS_PORT}/api/v1/write"
+K6_PROMETHEUS_RW_TREND_AS_NATIVE_HISTOGRAM = false
+DB_URL = "postgresql://postgres:postgres@127.0.0.1:5432/myapp"
+# Override as desired
+_.file = ".env"
+
+[vars]
+# Prefer docker when installed, otherwise fall back to podman. Kept in vars (not env) so the check only runs when a
+# task is executed rather than on every shell activation.
+container = "{{ exec(command='command -v docker >/dev/null 2>&1 && echo docker || echo podman') }}"
+
+[tasks.up]
+description = "Start the default compose services"
+run = "{{vars.container}} compose up -d"
+
+[tasks.up-all]
+description = "Start all services including the test profile"
+run = "{{vars.container}} compose --profile test up -d"
+
+[tasks.down]
+description = "Stop everything, including the test profile, and remove volumes"
+run = "{{vars.container}} compose --profile test down --volumes"
+
+[tasks.build]
+description = "Build the compose images"
+run = "{{vars.container}} compose build"
+
+[tasks.refresh]
+description = "Rebuild images, then start services"
+run = [{ task = "build" }, { task = "up" }]
+
+[tasks.test]
+description = "Run the k6 load test"
+run = "{{vars.container}} compose --profile test up -d k6"
+
+[tasks.release]
+description = "Generate the changelog, commit it, and tag the bumped version"
+shell = "bash -c"
+run = '''
+set -euo pipefail
+
+# Compute the version once so the commit message and tag can't disagree if the history changes mid-run.
+version="$(git-cliff --bumped-version)"
+
+git cliff -c cliff.toml --bump > docs/CHANGELOG.md
+git add docs/CHANGELOG.md
+git commit -S -m "release: add changelog for ${version}"
+git tag "${version}" -m "Release ${version}"
+'''
