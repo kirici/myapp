@@ -1,0 +1,26 @@
+apiVersion: score.dev/v1b1
+metadata:
+  name: k6
+containers:
+  k6:
+    image: docker.io/grafana/k6:2.3.0
+    args: [run, -o, experimental-prometheus-rw, /scripts/k6-script.js]
+    variables:
+      PORT: ${resources.web.port}
+      K6_PROMETHEUS_RW_SERVER_URL: http://${resources.prometheus.hostname}:${resources.prometheus.port}/api/v1/write
+      K6_PROMETHEUS_RW_TREND_AS_NATIVE_HISTOGRAM: "false"
+    files:
+      /scripts/k6-script.js:
+        source: k6-script.js
+        noExpand: true
+resources:
+  web:
+    type: service-port
+    params:
+      workload: web
+      port: http
+  prometheus:
+    type: service-port
+    params:
+      workload: prometheus
+      port: http

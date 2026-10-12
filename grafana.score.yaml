@@ -1,0 +1,43 @@
+apiVersion: score.dev/v1b1
+metadata:
+  name: grafana
+containers:
+  grafana:
+    image: docker.io/grafana/grafana:13.2.3
+    files:
+      /etc/grafana/provisioning/datasources/sources.yaml:
+        content: |
+          apiVersion: 1
+          datasources:
+            - uid: be1abogsemnswc
+              name: prometheus
+              type: prometheus
+              access: proxy
+              url: http://${resources.prometheus.hostname}:${resources.prometheus.port}
+              isDefault: true
+              jsonData:
+                httpMethod: POST
+      /etc/grafana/provisioning/dashboards/dashboards.yaml:
+        source: grafana/dashboards.yaml
+      # Dashboards contain Grafana's own ${...} syntax, so skip Score placeholder expansion
+      /etc/grafana/provisioning/dashboards/myapp.json:
+        source: grafana/myapp.json
+        noExpand: true
+      /etc/grafana/provisioning/dashboards/myapp-api.json:
+        source: grafana/myapp-api.json
+        noExpand: true
+    readinessProbe:
+      httpGet:
+        port: 3000
+        path: /api/health
+service:
+  ports:
+    http:
+      port: 3000
+      targetPort: 3000
+resources:
+  prometheus:
+    type: service-port
+    params:
+      workload: prometheus
+      port: http

@@ -1,0 +1,37 @@
+apiVersion: score.dev/v1b1
+metadata:
+  name: prometheus
+containers:
+  prometheus:
+    image: docker.io/prom/prometheus:v3.14.0
+    args:
+      - --web.listen-address=:9090
+      - --web.enable-remote-write-receiver
+      - --config.file=/etc/prometheus/prometheus.yml
+      - --storage.tsdb.path=/prometheus
+    variables:
+      GOMEMLIMIT: 256MiB
+    files:
+      /etc/prometheus/prometheus.yml:
+        content: |
+          global:
+            scrape_interval: 5s
+          scrape_configs:
+            - job_name: myapp
+              static_configs:
+                - targets: ['${resources.web.hostname}:${resources.web.port}']
+    readinessProbe:
+      httpGet:
+        port: 9090
+        path: /-/ready
+service:
+  ports:
+    http:
+      port: 9090
+      targetPort: 9090
+resources:
+  web:
+    type: service-port
+    params:
+      workload: web
+      port: http

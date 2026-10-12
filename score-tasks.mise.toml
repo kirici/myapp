@@ -1,0 +1,41 @@
+# Merge into mise.toml on feat/compose-to-kind (reuses its vars and cluster/build/load/lb/urls tasks).
+# Also add to .gitignore (state holds generated DB credentials): .score-compose/ .score-k8s/ score-compose.yaml score-k8s.yaml
+
+[tools]
+"github:score-spec/score-compose" = "0.47.0"
+"github:score-spec/score-k8s" = "0.20.0"
+
+[tasks."score:compose"]
+description = "Generate score-compose.yaml (the --publish flags must be on the last generate call)"
+run = '''
+[ -d .score-compose ] || score-compose init --no-sample --patch-templates ./compose-patches.tpl
+score-compose generate score.yaml -o score-compose.yaml --build 'web={"context":".","dockerfile":"containerfile"}'
+score-compose generate prometheus.score.yaml grafana.score.yaml k6.score.yaml -o score-compose.yaml \
+  --publish 8080:web:8080 --publish 9090:prometheus:9090 --publish 3000:grafana:3000
+'''
+
+[tasks."score:compose-up"]
+run = [{ task = "score:compose" }, "{{vars.container}} compose -f score-compose.yaml up -d --build"]
+
+[tasks."score:compose-test"]
+run = "{{vars.container}} compose -f score-compose.yaml --profile test up -d k6-k6"
+
+[tasks."score:k8s"]
+description = "Generate score-k8s.yaml"
+run = '''
+[ -d .score-k8s ] || score-k8s init --no-sample --patch-templates ./kind-patches.tpl
+score-k8s generate score.yaml --image {{vars.image}} -o score-k8s.yaml -n myapp --generate-namespace
+score-k8s generate prometheus.score.yaml grafana.score.yaml k6.score.yaml -o score-k8s.yaml -n myapp --generate-namespace
+'''
+
+[tasks."score:k8s-up"]
+run = [
+  { task = "cluster" }, { task = "build" }, { task = "load" }, { task = "score:k8s" },
+  "{{vars.kubectl}} apply --server-side -f score-k8s.yaml -l 'profile!=test'",
+]
+
+[tasks."score:k8s-test"]
+run = '''
+{{vars.kubectl}} -n myapp delete job k6 --ignore-not-found
+{{vars.kubectl}} apply --server-side -f score-k8s.yaml -l profile=test
+'''
