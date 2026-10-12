@@ -52,7 +52,7 @@ set -euo pipefail
 
 # `kind load docker-image` shells out to a literal `docker` binary, which a podman-only host doesn't have. Going through
 # an archive works for both runtimes.
-archive="$(mktemp --suffix=.tar)"
+archive="$(mktemp -d)/$(uuidgen).tar"
 trap 'rm -f "${archive}"' EXIT
 
 {{vars.container}} save --output "${archive}" {{vars.image}}
